@@ -15,7 +15,12 @@ jobs:
     # However, using a personal access token will cause events to be triggered.
     # We need that to ensure a status gets posted after the auto-format commit.
     # We also want to trigger tests if the auto-format made no changes.
-    - uses: actions/checkout@v2
+    - name: Harden Runner
+      uses: step-security/harden-runner@18bf8ad2ca49c14cbb28b91346d626ccfb00c518 # v2.1.0
+      with:
+        egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
+    - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6 # v2.6.0
       if: github.event.pull_request.state == 'open'
       name: Privileged Checkout
       with:
@@ -62,7 +67,7 @@ jobs:
         fi
 
     - name: Auto Test
-      uses: cloudposse/actions/github/repository-dispatch@0.30.0
+      uses: cloudposse/actions/github/repository-dispatch@45e16b2683a6ebe0625b6ca322858354b83443ab # 0.30.0
       # match users by ID because logins (user names) are inconsistent,
       # for example in the REST API Renovate Bot is `renovate[bot]` but
       # in GraphQL it is just `renovate`, plus there is a non-bot
